@@ -41,6 +41,11 @@ Asenna Flask koneellesi
 
 `pip install flask`
 
+Asenna tietokanta tomintaa varten flask-sqlalchemy ja psycopq2
+
+`pip install flask-sqlalchemy`
+`pip install psycopg2`
+
 Jos PostreSQL-tietokanta asennettuna onnistuneesti koneelle serveri avataan ennen sovelluksen käynnistystä
 
 `start-pg.sh`
