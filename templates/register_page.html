@@ -1,0 +1,50 @@
+<html>
+
+<head>
+
+<title>Topway</title>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/base_html.css')}}">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+        <div class="header">
+                <nav class="navbar  navbar-expand-lg" id="heading">
+                  <a class="navbar-brand">Topway</a>
+                </nav>
+
+        
+        <div class="container">
+                <div class="col-8">
+
+                <p>Create username</p>
+        
+                <form action="/register" method="POST"> 
+
+                <input type="text" id="runame" name="runame">
+
+                <p>Create password</p>
+
+                <input type="password" id="rupass" name="rupass">
+
+                <p>Reapeat password</p>
+
+                <input type="password" id="rupass2" name="rupass2">
+
+                <input type="submit" value="Sign up">
+
+                </form>
+        
+                <p style="color: red">{{texto_register}}</p>
+
+                </div>
+        </div>
+
+</body>
+</html>

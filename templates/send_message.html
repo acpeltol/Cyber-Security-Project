@@ -1,0 +1,103 @@
+<html>
+
+<head>
+
+<title>Topway</title>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/base_html.css')}}">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+
+    <div class="header">
+        <nav class="navbar  navbar-expand-lg" id="heading">
+          <a class="navbar-brand">Topway</a>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="/main_page">Main</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/friends">Friends</a>
+              </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/messages">Messages</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/profile">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Log out</a>
+            </li>
+          </ul>
+        </nav>
+
+    </div>
+        <div class="container">
+          <div class="row">
+            <div class="col-6">
+            <form action="/send_check" method="POST">
+              <p>To:</p>
+
+
+              <input type="text" id="to_user" name="to_user">
+
+              <p style="color: red;">{{wrong_user}}</p>
+
+              <br>
+
+              <p>Message:</p>
+
+              <textarea type="text" id="messag" name="messag" cols="50" rows="4" value=" ">
+
+
+              </textarea> 
+
+              <input type="hidden" id="message_c" name="message_c" value={{session.csrf_token}}>
+              
+
+              <br>
+
+
+              <input type="submit" value="Send">
+
+            </form>
+
+          </div>
+
+          <div class="col-6">
+
+            <div class="row" id="send_message_friend">
+
+              <h1>Friends</h1>
+  
+              </div>
+  
+              {%for i in range(0,len)%}
+  
+              <div class="row">
+  
+                <h2 id="friend"> {{friend_list[i][0]}}</h2>
+  
+              </div>
+  
+                <br>
+                  
+              {%endfor%}
+  
+            </div>
+          </div>
+
+
+
+          </div>
+        </div>
+
+
+</body>
+</html>
