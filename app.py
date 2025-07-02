@@ -12,6 +12,11 @@ app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
 
+## CYBERSECURITY: Secrets in the code
+
+#app.secret_key = "KEEEy"
+#app.config["SQLALCHEMY_DATABASE_URI"] = ///databaseurl
+
 db = SQLAlchemy(app)
 
 
@@ -39,6 +44,8 @@ def index():
     #Checks if username and password is correct 
 
     if request.method == "POST":
+
+        ## CYBERSECURITY: SQL Injection !!!
 
         u_id = db.session.execute(text(f'''SELECT id,upass  FROM users
                                    WHERE uname = '{request.form["uname"]}' ''')).fetchall()         
@@ -277,8 +284,10 @@ def friends_delete():
             #print(request_list[i][0])
             kate = request.form[friend_list[i][0]]
 
-            if session["csrf_token"] != request.form[friend_list[i][0]+"_c_delete"]:
-                abort(403)
+            ## CYBERSECURITY: There is no csrf token check
+
+            # if session["csrf_token"] != request.form[friend_list[i][0]+"_c_delete"]:
+            #     abort(403)
 
             db.session.execute(text(f'''UPDATE friends SET visible=FALSE WHERE user_name = 
                                     '{session["user"]}' AND friend_name = '{friend_list[i][0]}' '''))
