@@ -1,4 +1,5 @@
-from flask import Flask
+import os
+from flask import Flask, Response, abort
 from flask import render_template, redirect, request, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
@@ -9,13 +10,19 @@ import secrets
 
 app = Flask(__name__)
 
-app.secret_key = getenv("SECRET_KEY")
-app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
 
 ## CYBERSECURITY: Secrets in the code
 
-#app.secret_key = "KEEEy"
-#app.config["SQLALCHEMY_DATABASE_URI"] = ///databaseurl
+# app.secret_key = "KEEEy"
+# app.config["SQLALCHEMY_DATABASE_URI"] = ///databaseurl
+
+
+## Fix for secrets in code
+
+app.secret_key = getenv("SECRET_KEY")
+app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
+
+# END of the fix
 
 db = SQLAlchemy(app)
 
@@ -48,14 +55,14 @@ def index():
         ## CYBERSECURITY: SQL Injection !!!
 
         u_id = db.session.execute(text(f'''SELECT id,upass  FROM users
-                                   WHERE uname = '{request.form["uname"]}' ''')).fetchall()         
+                                   WHERE uname = '{request.form["uname"]}' AND upass = '{request.form["upass"]}' ''')).fetchall()
 
-        if len(u_id) != 1:            
+        if len(u_id) == 0:
             
             texto = "Username or password is wrong"
             return render_template("base.html", texto = texto)
-    
-        if check_password_hash(u_id[0][1], request.form["upass"]):
+
+        if len(u_id) >= 1:
 
             user = request.form["uname"]
             session["user"] = user
@@ -71,6 +78,36 @@ def index():
                 return render_template("main_page.html", texto = session["user"])
 
             return render_template("get_information.html")
+        
+        ## Fix for SQL injection and weak autentication
+
+
+        # command = text("SELECT id, upass FROM users WHERE uname = :uname")
+        # u_id = db.session.execute(command, {"uname": request.form["uname"]}).fetchall()
+
+        # if len(u_id) == 0:
+            
+        #     texto = "Username or password is wrong"
+        #     return render_template("base.html", texto = texto)
+    
+        # if check_password_hash(u_id[0][1], request.form["upass"]):
+
+        #     user = request.form["uname"]
+        #     session["user"] = user
+
+        #     session["csrf_token"] = secrets.token_hex(16)
+
+
+
+        #     u_id = db.session.execute(text(f'''  
+        #             SELECT * FROM users_information WHERE user_name = '{session["user"]}' ''')).fetchall()
+            
+        #     if len(u_id) == 1:
+        #         return render_template("main_page.html", texto = session["user"])
+
+        #     return render_template("get_information.html")
+        
+        ## End of the Fix
         
         else:
 
@@ -140,8 +177,18 @@ def register():
 
         if texto_register == 1:
 
+            ## CYBER SECURITY FLAW: Password not hashed
+
             db.session.execute(text(f'''INSERT INTO users (uname, upass) VALUES 
-                                    ('{request.form["runame"]}', '{generate_password_hash(request.form["rupass"])}')'''))
+                                    ('{request.form["runame"]}', '{request.form["rupass"]}')'''))
+            
+            ## Fix for hashing the password
+
+            # db.session.execute(text(f'''INSERT INTO users (uname, upass) VALUES 
+            #                         ('{request.form["runame"]}', '{generate_password_hash(request.form["rupass"])}')'''))
+
+            # End of the fix 
+
             db.session.commit()
 
             user = request.form["runame"]
@@ -280,14 +327,10 @@ def friends_delete():
     for i in range(len(friend_list)):
 
         try:
-
-            #print(request_list[i][0])
             kate = request.form[friend_list[i][0]]
 
-            ## CYBERSECURITY: There is no csrf token check
-
-            # if session["csrf_token"] != request.form[friend_list[i][0]+"_c_delete"]:
-            #     abort(403)
+            if session["csrf_token"] != request.form[friend_list[i][0]+"_c_delete"]:
+                abort(403)
 
             db.session.execute(text(f'''UPDATE friends SET visible=FALSE WHERE user_name = 
                                     '{session["user"]}' AND friend_name = '{friend_list[i][0]}' '''))
@@ -340,9 +383,14 @@ def friends_find():
 @app.route("/friend_request", methods = ["POST"])
 def friend_request():
 
-    if session["csrf_token"] != request.form["friend_request_c"]:
-        abort(403)
-        #print("hey")
+    ## CYBERSECURITY: There is no csrf token check
+
+    ## FIX for not csrf token check
+
+    # if session["csrf_token"] != request.form["friend_request_c"]:
+    #     abort(403)
+
+    ## End of the fix
 
     check = db.session.execute(text(f'''SELECT * FROM friend_request
                                    WHERE from_name = '{session["user"]}' AND to_name = '{request.form["friend_request_info"]}' AND visible = True''')).fetchall()
@@ -527,6 +575,7 @@ def messages():
 
     recived_list = db.session.execute(text(f'''SELECT * FROM messages
                                    WHERE to_user = '{session["user"]}' ORDER BY id DESC''')).fetchall()
+
 
     return render_template("messages.html", len_recived = len(recived_list), recived_list = recived_list)
 

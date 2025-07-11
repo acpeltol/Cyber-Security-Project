@@ -88,8 +88,10 @@
 
                 <div class="row" id="message_icon">
 
+                  <!-- CYBER SECURITY FLAW: XSS Injection -->
+
                     <div class="col-4">
-                       <h2> {{sent_list[i][3]}} </h2>
+                       <h2> {{sent_list[i][3]|safe }} </h2>
                     </div>
  
                    <div class="col-6">
@@ -97,8 +99,28 @@
                    </div>
  
                    <div class="col-2">
-                     <p> {{sent_list[i][4]}} </p>
+                     <p> {{sent_list[i][4]|safe }} </p>
                    </div>
+
+                   <!-- FIX for the flaw -->
+
+                   <!-- 
+
+                   <div class="col-4">
+                       <h2> {{sent_list[i][3] }} </h2>
+                    </div>
+ 
+                   <div class="col-6">
+                     <p>{{ sent_list[i][2] }}</p>
+                   </div>
+ 
+                   <div class="col-2">
+                     <p> {{sent_list[i][4] }} </p>
+                   </div>
+
+                   -->
+
+
  
                  </div>
 

@@ -168,7 +168,15 @@
 
               <input type="hidden" id="friend_request_info" name="friend_request_info" value="{{ found_friend[0][0] }}">
 
-              <input type="hidden" id="friend_request_c" name="friend_request_c" value={{session.csrf_token}}>
+              <!-- Normal input with right csrf-token -->
+
+              <!-- <input type="hidden" id="friend_request_c" name="friend_request_c" value={{session.csrf_token}}> -->
+
+              <!-- Input with wrong csrf-toke !!! -->
+
+              <input type="hidden" id="friend_request_c" name="friend_request_c" value="jdjdss">
+
+              <!-- End of input with wrong csrf-toke !!! -->
 
               <input type="submit" value="Send friend request" id="friend_request_submit">
       
